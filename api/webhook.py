@@ -527,8 +527,8 @@ class handler(BaseHTTPRequestHandler):
             l = state['lang']
             is_kg = state['org'] == 'kg'
             
-            if '📞' in text or text == '7' or 'жалоб' in lower or 'шағым' in lower:
-                msg = f"{t[l]['complaintAsk']}\n\n0. {t[l]['back']}"
+            if '📞' in text or text == '7' or 'отзыв' in lower or 'пікір' in lower or 'предложение' in lower or 'ұсыны' in lower:
+                msg = f"{t[l]['feedbackAsk']}\n\n0. {t[l]['back']}"  # ✅ FIXED
                 state['step'] = 'complaint'
             elif text == '1' or '📋' in text or 'общая' in lower or 'жалпы' in lower:
                 msg = f"{t[l]['info_kg' if is_kg else 'info_school']}\n\n{get_main_menu(l)}"
@@ -546,23 +546,23 @@ class handler(BaseHTTPRequestHandler):
             else:
                 msg = f"{t[l]['notUnderstood']}\n\n{get_main_menu(l)}"
         
-        # Жалоба
+        # Жалоба/Отзыв
         elif state['step'] == 'complaint':
             org_name = ('Детский сад' if state['lang'] == 'ru' else 'Балабақша') if state['org'] == 'kg' else ('Школа' if state['lang'] == 'ru' else 'Мектеп')
             now = datetime.now()
             
-            telegram_msg = f"""🚨 <b>ЖАЛОБА</b>
+            telegram_msg = f"""🚨 <b>ОТЗЫВ/ПРЕДЛОЖЕНИЕ</b>
 📊 {now.strftime('%d.%m.%Y %H:%M')}
 👤 {sender}
 🏫 {org_name}
 🗣 {'🇷🇺' if state['lang'] == 'ru' else '🇰🇿'}
 
-<b>Текст:</b>
-{text}"""
+        <b>Текст:</b>
+        {text}"""
             send_telegram(telegram_msg)
             
             state['step'] = 'menu'
-            msg = f"{t[state['lang']]['complaintDone']}\n\n{get_main_menu(state['lang'])}"
+            msg = f"{t[state['lang']]['feedbackDone']}\n\n{get_main_menu(state['lang'])}"  # ✅ FIXED
         
         # Запись
         elif state['step'] == 'enroll':
